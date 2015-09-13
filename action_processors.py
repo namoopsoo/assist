@@ -1,6 +1,23 @@
 
+class Action(object):
+    def __init__(self, **kwargs):
+        self.name = kwargs['name']
+        self.command = kwargs['command']
+        self.content_dict = kwargs['content_dict']
 
-class MyCalendar(object):
+class ActionProcessor(object):
+    def get_command_reply(self, command):
+
+        if command == 'nextevent':    
+
+            my_calendar = MyCalendar()
+            next_event = my_calendar.get_next_cal_event()
+            if next_event:
+                return next_event
+
+        return 'foo'
+
+class CalendarActionProcessor(ActionProcessor):
 
     def __init__(self):
         #
