@@ -1,14 +1,30 @@
 
+import httplib2
+import os
+
+from apiclient import discovery
+import oauth2client
+from oauth2client import client
+from oauth2client import tools
+
+import datetime
+
 class Action(object):
     def __init__(self, **kwargs):
         self.name = kwargs['name']
         self.command = kwargs['command']
         self.content_dict = kwargs['content_dict']
+        self.raw_content = kwargs['raw_content']
+        self.originator = kwargs['originator']
 
 class ActionProcessor(object):
-    def get_command_reply(self, command):
+    NEXTEVENT = 'nextevent'
 
-        if command == 'nextevent':    
+    def __init__(self, action, **kwargs):
+        self.action = action
+
+    def get_command_reply(self):
+        if command == 'nextevent':
 
             my_calendar = MyCalendar()
             next_event = my_calendar.get_next_cal_event()
@@ -17,13 +33,44 @@ class ActionProcessor(object):
 
         return 'foo'
 
+    def send_the_reply(self, reply):
+        ''' Perform the reply send.
+        '''
+        pass
+        self.action.originator
+        self.action.provost
+
+        import pdb; pdb.set_trace()
+        # send_message()
+        pass
+
+
 class CalendarActionProcessor(ActionProcessor):
 
-    def __init__(self):
+    def __init__(self, action, **kwargs):
         #
+        super(CalendarActionProcessor, self).__init__(action, **kwargs)
+
         credentials = get_credentials()
         http = credentials.authorize(httplib2.Http())
         self.service = discovery.build('calendar', 'v3', http=http)
+
+    def get_command_reply(self):
+        pass
+
+    def process_reply(self):
+        ''' Process action and send back reply
+        '''
+        self.action
+
+        next_event = self.get_next_cal_event()
+        if next_event:
+            return next_event
+
+        reply = next_event
+
+        self.send_the_reply(reply)
+
 
     def get_next_cal_event(self):
 

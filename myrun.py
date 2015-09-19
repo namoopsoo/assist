@@ -1,8 +1,10 @@
 from flask import Flask, request, redirect
 import twilio.twiml
 
-from quickstart_google_cal import MyCalendar
+# from quickstart_google_cal import MyCalendar
 from responder import ServerResponder
+from utils import form_twiml_reply
+
 
 import settings
  
@@ -16,14 +18,10 @@ def main_twilio_entrypoint():
 
     reply = r.handle_message()
 
-    response = form_twiml_reply(reply)
-    return response
+    # response = form_twiml_reply(reply)
+    # return response
+    return reply
 
-def form_twiml_reply(reply_text):
-    resp = twilio.twiml.Response()
-    resp.message(reply_text)
-
-    return resp
 
 if __name__ == "__main__":
     app.run(debug=True)
