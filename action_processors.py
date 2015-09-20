@@ -32,7 +32,6 @@ class ActionProcessor(object):
         self.action.originator
         self.action.provost
 
-        import pdb; pdb.set_trace()
         # send_message()
         pass
 

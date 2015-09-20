@@ -24,7 +24,6 @@ class ServerResponder(object):
             reply = self.UNKNOWN_SENDER_REPLY
             resp = form_twiml_reply(reply)
             return resp
-        import pdb; pdb.set_trace()
 
         # Try to determine Action
         action = self.determine_action_from_request()
@@ -72,7 +71,7 @@ class ServerResponder(object):
         }
 
         for command_ in legal_actions.keys():
-            match = re.match(command_ + ' (.*)$', body)
+            match = re.match(command_ + '(.*)$', body)
             if match:
                 content = match.groups()
                 content = content[0]
