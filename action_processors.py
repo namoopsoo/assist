@@ -7,6 +7,8 @@ import oauth2client
 from oauth2client import client
 from oauth2client import tools
 
+from quickstart_google_cal import get_credentials
+
 import datetime
 
 class Action(object):
@@ -22,16 +24,6 @@ class ActionProcessor(object):
 
     def __init__(self, action, **kwargs):
         self.action = action
-
-    def get_command_reply(self):
-        if command == 'nextevent':
-
-            my_calendar = MyCalendar()
-            next_event = my_calendar.get_next_cal_event()
-            if next_event:
-                return next_event
-
-        return 'foo'
 
     def send_the_reply(self, reply):
         ''' Perform the reply send.
@@ -54,9 +46,6 @@ class CalendarActionProcessor(ActionProcessor):
         credentials = get_credentials()
         http = credentials.authorize(httplib2.Http())
         self.service = discovery.build('calendar', 'v3', http=http)
-
-    def get_command_reply(self):
-        pass
 
     def process_reply(self):
         ''' Process action and send back reply

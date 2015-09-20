@@ -15,7 +15,6 @@ class ServerResponder(object):
     def __init__(self, request):
         self.request = request
 
-
     def handle_message(self):
         '''Handles a Flask request  from twilio '''
 
@@ -25,6 +24,7 @@ class ServerResponder(object):
             reply = self.UNKNOWN_SENDER_REPLY
             resp = form_twiml_reply(reply)
             return resp
+        import pdb; pdb.set_trace()
 
         # Try to determine Action
         action = self.determine_action_from_request()
@@ -40,16 +40,22 @@ class ServerResponder(object):
         # Until queueing the actions in a rabbit mq, just call process_actions() outright.
         # This will also send replies ( out of order however, for now).
         actions = [action]
-        process_actions.(actions)
+        process_actions(actions)
 
         reply = self.get_acknowledgement_reply(action)
         resp = form_twiml_reply(reply)
         return str(resp)
 
     def get_caller(self):
-        from_number = self.request.get('From', None)
+        number = self.request.get('From', None)
 
+        m = re.match('\+1(\d*)$', number)
+        try:
+            from_number = m.group(1)
+        except IndexError:
+            return None
         caller_dict = settings.CALLERS.get(from_number)
+        if not caller_dict: return None
         caller_name = caller_dict['name']
 
         return caller_name
@@ -82,7 +88,7 @@ class ServerResponder(object):
 
         return action
 
-    def get_acknowledgement_reply(action):
+    def get_acknowledgement_reply(self, action):
         ''' After queueing the action, acknowledge its receipt.
         '''
         caller_name = action.originator
