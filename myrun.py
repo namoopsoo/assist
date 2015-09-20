@@ -13,7 +13,6 @@ app = Flask(__name__)
 @app.route("/reply", methods=['GET', 'POST'])
 def main_twilio_entrypoint():
 
-    import pdb; pdb.set_trace()
     r = ServerResponder(request.values)
 
     reply = r.handle_message()

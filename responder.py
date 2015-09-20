@@ -19,8 +19,8 @@ class ServerResponder(object):
         '''Handles a Flask request  from twilio '''
 
         # Quit out if unknown sender
-        caller_name = self.get_caller()
-        if not caller_name:
+        caller_dict = self.get_caller()
+        if not caller_dict:
             reply = self.UNKNOWN_SENDER_REPLY
             resp = form_twiml_reply(reply)
             return resp
@@ -33,7 +33,7 @@ class ServerResponder(object):
             return resp
 
         # Absorb caller
-        action.originator = caller_name
+        action.originator = caller_dict
 
         #
         # Until queueing the actions in a rabbit mq, just call process_actions() outright.
@@ -46,18 +46,19 @@ class ServerResponder(object):
         return str(resp)
 
     def get_caller(self):
-        number = self.request.get('From', None)
+        raw_number = self.request.get('From', None)
 
-        m = re.match('\+1(\d*)$', number)
+        m = re.match('\+1(\d*)$', raw_number)
         try:
             from_number = m.group(1)
         except IndexError:
             return None
         caller_dict = settings.CALLERS.get(from_number)
-        if not caller_dict: return None
-        caller_name = caller_dict['name']
+        if not caller_dict: 
+            return None
 
-        return caller_name
+        caller_dict['number'] = from_number
+        return caller_dict
 
     def determine_action_from_request(self):
         '''See if valid action from message'''
@@ -90,7 +91,7 @@ class ServerResponder(object):
     def get_acknowledgement_reply(self, action):
         ''' After queueing the action, acknowledge its receipt.
         '''
-        caller_name = action.originator
+        caller_name = action.originator['name']
         action_name = action.name
 
         response = self.THANKS_FOR_MESSAGE_REPLY.format(name=caller_name,

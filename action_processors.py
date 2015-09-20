@@ -1,6 +1,7 @@
 
 import httplib2
 import os
+import datetime
 
 from apiclient import discovery
 import oauth2client
@@ -9,7 +10,8 @@ from oauth2client import tools
 
 from quickstart_google_cal import get_credentials
 
-import datetime
+
+from utils import send_message
 
 class Action(object):
     def __init__(self, **kwargs):
@@ -28,12 +30,10 @@ class ActionProcessor(object):
     def send_the_reply(self, reply):
         ''' Perform the reply send.
         '''
-        pass
-        self.action.originator
-        self.action.provost
+        to_num = '+1{number}'.format(
+                number=self.action.originator['number'])
 
-        # send_message()
-        pass
+        send_message(to=to_num, body=reply)
 
 
 class CalendarActionProcessor(ActionProcessor):
@@ -52,13 +52,17 @@ class CalendarActionProcessor(ActionProcessor):
         self.action
 
         next_event = self.get_next_cal_event()
-        if next_event:
-            return next_event
+        if not next_event:
+            return None
 
-        reply = next_event
+        originator_name = self.action.originator['name']
+
+        reply = 'Hi {name}, {action_name} result: {result}'.format(
+                name=originator_name,
+                action_name=self.action.name,
+                result=next_event)
 
         self.send_the_reply(reply)
-
 
     def get_next_cal_event(self):
 
